@@ -1,2 +1,7 @@
 .actionScriptProperties
-
+.flexLibProperties
+.flexProperties
+.project
+.settings
+html-template
+settings.xml
