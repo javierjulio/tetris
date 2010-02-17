@@ -2,8 +2,9 @@ package com.javierjulio.tetris.model
 {
 	import com.javierjulio.tetris.core.MoveDirection;
 	import com.javierjulio.tetris.utils.ArrayUtil;
-	import com.javierjulio.tetris.vo.CellVO;
+	import com.javierjulio.tetris.model.grid.Cell;
 	import com.javierjulio.tetris.vo.TetrominoVO;
+	import com.javierjulio.tetris.model.grid.Grid;
 
 	public class GameModel
 	{
@@ -40,7 +41,7 @@ package com.javierjulio.tetris.model
 		
 		
 		
-		public var grid:GridModel;
+		public var grid:Grid;
 		
 		
 		//----------------------------------
@@ -77,7 +78,7 @@ package com.javierjulio.tetris.model
 		public function move(tetromino:TetrominoVO, direction:String):Boolean 
 		{
 			var cells:Array = tetromino.cells;
-			var cell:CellVO;
+			var cell:Cell;
 			var movedCells:Array = [];
 			var newColumn:Number;
 			var newRow:Number;
@@ -85,7 +86,7 @@ package com.javierjulio.tetris.model
 			
 			for (var i:int = 0; i < cells.length; i++) 
 			{
-				cell = CellVO(cells[i]);
+				cell = Cell(cells[i]);
 				
 				// calculate the new column and row for the specified direction
 				switch (direction) 
@@ -117,27 +118,27 @@ package com.javierjulio.tetris.model
 						// and columns, so we'll have 2x2, 3x3 and 4x4 grids 
 						// where that top left cell starts at 0,0... think of 
 						// it as a 2D array which is 0 based.
-						newColumn = cell.column - tetromino.startGridPoint.column;
-						newRow = cell.row - tetromino.startGridPoint.row;
+						newColumn = cell.column - tetromino.location.column;
+						newRow = cell.row - tetromino.location.row;
 						
 						// the rotation magic.. sweet and simple.. basically 
 						// we swap the values
 						newRow = newColumn;
-						newColumn = tetromino.size - (cell.row - tetromino.startGridPoint.row) - 1; 
+						newColumn = tetromino.size - (cell.row - tetromino.location.row) - 1; 
 						
-						newColumn = newColumn + tetromino.startGridPoint.column;
-						newRow = newRow + tetromino.startGridPoint.row;
+						newColumn = newColumn + tetromino.location.column;
+						newRow = newRow + tetromino.location.row;
 						break;
 					
 					case MoveDirection.ROTATE_COUNTER_CLOCKWISE:
-						newColumn = cell.column - tetromino.startGridPoint.column;
-						newRow = cell.row - tetromino.startGridPoint.row;
+						newColumn = cell.column - tetromino.location.column;
+						newRow = cell.row - tetromino.location.row;
 						
 						newColumn = newRow;
-						newRow = tetromino.size - (cell.column - tetromino.startGridPoint.column) - 1;
+						newRow = tetromino.size - (cell.column - tetromino.location.column) - 1;
 						
-						newColumn = newColumn + tetromino.startGridPoint.column;
-						newRow = newRow + tetromino.startGridPoint.row;
+						newColumn = newColumn + tetromino.location.column;
+						newRow = newRow + tetromino.location.row;
 						break;
 				}
 				
@@ -148,7 +149,7 @@ package com.javierjulio.tetris.model
 					continue;
 				} 
 				else 
-					movedCells.push(new CellVO(newColumn, newRow));
+					movedCells.push(new Cell(newColumn, newRow));
 			}
 			
 			if (canMove) 
@@ -156,25 +157,25 @@ package com.javierjulio.tetris.model
 				switch (direction) 
 				{
 					case MoveDirection.MOVE_DOWN:
-						tetromino.startGridPoint.row = tetromino.startGridPoint.row + 1;
+						tetromino.location.row = tetromino.location.row + 1;
 						break;
 					
 					case MoveDirection.MOVE_LEFT:
-						tetromino.startGridPoint.column = tetromino.startGridPoint.column - 1;
+						tetromino.location.column = tetromino.location.column - 1;
 						break;
 					
 					case MoveDirection.MOVE_RIGHT:
-						tetromino.startGridPoint.column = tetromino.startGridPoint.column + 1;
+						tetromino.location.column = tetromino.location.column + 1;
 						break;
 				}
 				
 				// commit moved cell locations
 				for (var j:int = 0; j < movedCells.length; j++) 
 				{
-					cell = CellVO(movedCells[j]);
+					cell = Cell(movedCells[j]);
 					
-					CellVO(tetromino.cells[j]).column = cell.column;
-					CellVO(tetromino.cells[j]).row = cell.row;
+					Cell(tetromino.cells[j]).column = cell.column;
+					Cell(tetromino.cells[j]).row = cell.row;
 				}
 			}
 			

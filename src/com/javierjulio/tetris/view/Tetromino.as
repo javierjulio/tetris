@@ -1,6 +1,6 @@
 package com.javierjulio.tetris.view
 {
-	import com.javierjulio.tetris.vo.CellVO;
+	import com.javierjulio.tetris.model.grid.Cell;
 	import com.javierjulio.tetris.vo.TetrominoVO;
 	
 	import flash.display.Graphics;
@@ -18,7 +18,7 @@ package com.javierjulio.tetris.view
 			var g:Graphics = graphics;
 			
 			var cellSize:Number = 20;
-			var cell:CellVO;
+			var cell:Cell;
 			
 			g.clear();
 			
@@ -26,7 +26,7 @@ package com.javierjulio.tetris.view
 			
 			for (var i:int = 0; i < cells.length; i++) 
 			{
-				cell = CellVO(cells[i]);
+				cell = Cell(cells[i]);
 				
 				var x:Number = cellSize * cell.column;
 				var y:Number = cellSize * cell.row;

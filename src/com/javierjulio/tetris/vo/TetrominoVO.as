@@ -1,6 +1,7 @@
 package com.javierjulio.tetris.vo
 {
 	import com.javierjulio.tetris.enum.TetrominoTypeEnum;
+	import com.javierjulio.tetris.model.grid.Cell;
 	
 	/**
 	 * The <code>TetrominoVO</code> object defines a Tetromino's cell locations, 
@@ -46,6 +47,22 @@ package com.javierjulio.tetris.vo
 		public var cells:Array;
 		
 		//----------------------------------
+		//  location
+		//----------------------------------
+		
+		/**
+		 * The starting, top left cell coordinate in the grid where the Tetromino 
+		 * appears at.
+		 * 
+		 * <p>We use this coordinate with the cell coordinates defined in the 
+		 * <code>cells</code> property to determine exactly where each block 
+		 * in the Tetromino appears at in the Tetris grid.</p>
+		 * 
+		 * @default null
+		 */
+		public var location:Cell;
+		
+		//----------------------------------
 		//  rotatable
 		//----------------------------------
 		
@@ -72,24 +89,6 @@ package com.javierjulio.tetris.vo
 		 * @default NaN
 		 */
 		public var size:Number;
-		
-		//----------------------------------
-		//  startGridPoint
-		//----------------------------------
-		
-		// FIXME: might not be necessary to store here but instead store in the GridModel
-		
-		/**
-		 * The starting, top left cell coordinate in the Tetris grid where the 
-		 * Tetromino appears at.
-		 * 
-		 * <p>We use this coordinate with the cell coordinates defined in the 
-		 * <code>cells</code> property to determine exactly where each block 
-		 * in the Tetromino appears at in the Tetris grid.</p>
-		 * 
-		 * @default null
-		 */
-		public var startGridPoint:CellVO;
 		
 		//----------------------------------
 		//  type

@@ -4,11 +4,11 @@ package
 	import com.javierjulio.tetris.core.TetrominoFactory;
 	import com.javierjulio.tetris.enum.TetrominoTypeEnum;
 	import com.javierjulio.tetris.model.GameModel;
-	import com.javierjulio.tetris.model.GridModel;
+	import com.javierjulio.tetris.model.grid.Cell;
+	import com.javierjulio.tetris.model.grid.Grid;
 	import com.javierjulio.tetris.utils.ArrayUtil;
 	import com.javierjulio.tetris.view.GridRenderer;
 	import com.javierjulio.tetris.view.Tetromino;
-	import com.javierjulio.tetris.vo.CellVO;
 	import com.javierjulio.tetris.vo.TetrominoVO;
 	
 	import flash.display.Sprite;
@@ -25,13 +25,13 @@ package
 		private var tetromino:Tetromino;
 		
 		private var gameModel:GameModel;
-		private var gridModel:GridModel;
+		private var gridModel:Grid;
 		
 		public function Tetris()
 		{
 			super();
 			
-			gridModel = new GridModel(10, 22);
+			gridModel = new Grid(10, 22, Cell);
 			gameModel = new GameModel();
 			gameModel.grid = gridModel;
 			
@@ -40,9 +40,9 @@ package
 			grid.draw(440, 200, 20, 22, 10);
 			addChild(grid);
 			
-			randomTetromino = TetrominoFactory.getRandomTetromino();
+			randomTetromino = TetrominoFactory.getNextTetromino();
 			
-			shadowTetromino = TetrominoFactory.getTetromino(randomTetromino.type);
+			shadowTetromino = TetrominoFactory.getTetrominoByType(randomTetromino.type);
 			
 			tetromino = new Tetromino();
 			tetromino.draw(randomTetromino);
@@ -58,7 +58,7 @@ package
 			if (grid.contains(tetromino)) 
 				grid.removeChild(tetromino);
 			
-			randomTetromino = TetrominoFactory.getRandomTetromino();
+			randomTetromino = TetrominoFactory.getNextTetromino();
 			tetromino = new Tetromino();
 			tetromino.draw(randomTetromino);
 			
@@ -68,10 +68,6 @@ package
 		private function stage_keyUpHandler(event:KeyboardEvent):void 
 		{
 			var direction:String;
-			
-			// FIXME: the O Tetromino doesn't require rotations
-			if (randomTetromino.type == TetrominoTypeEnum.O) 
-				return;
 			
 			switch (event.keyCode) 
 			{
@@ -88,20 +84,26 @@ package
 					break;
 				
 				case Keyboard.UP:
+					if (!randomTetromino.rotatable) 
+						return;
+					
 					direction = MoveDirection.ROTATE_CLOCKWISE;
 					break;
 				
 				case Keyboard.TAB:
+					if (!randomTetromino.rotatable) 
+						return;
+					
 					direction = MoveDirection.ROTATE_COUNTER_CLOCKWISE;
 					break;
 			}
-			trace(direction);
+			
 			var result:Boolean = gameModel.move(randomTetromino, direction);
-			trace(result);
+			trace(direction, result);
 			if (result) 
 			{
-				shadowTetromino.startGridPoint.column = randomTetromino.startGridPoint.column;
-				shadowTetromino.startGridPoint.row = randomTetromino.startGridPoint.row;
+				shadowTetromino.location.column = randomTetromino.location.column;
+				shadowTetromino.location.row = randomTetromino.location.row;
 				
 				for (var i:int = 0; i < randomTetromino.cells.length; i++) 
 				{
@@ -131,8 +133,6 @@ package
 						while (gameModel.move(shadowTetromino, MoveDirection.MOVE_DOWN));
 						break;
 				}
-				
-				//trace(shadowTetromino.cells);
 				
 				shadow.draw(shadowTetromino);
 				

@@ -1,6 +1,6 @@
 package com.javierjulio.tetris.view
 {
-	import com.javierjulio.tetris.model.GridModel;
+	import com.javierjulio.tetris.model.grid.Grid;
 	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
@@ -12,7 +12,7 @@ package com.javierjulio.tetris.view
 			super();
 		}
 		
-		public var data:GridModel;
+		public var data:Grid;
 		
 		public function draw(height:Number, width:Number, cellSize:Number, rows:Number, cols:Number):void 
 		{
