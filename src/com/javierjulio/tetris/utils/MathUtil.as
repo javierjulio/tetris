@@ -9,7 +9,12 @@ package com.javierjulio.tetris.utils
 		//--------------------------------------------------------------------------
 		
 		/**
+		 * Calculates a random number within the specified range given.
 		 * 
+		 * @param min The minimum acceptable number as a result.
+		 * @param max The maximum acceptable number as a result.
+		 * 
+		 * @return A random number within the specified range given.
 		 */
 		public static function randRange(min:Number, max:Number):Number 
 		{

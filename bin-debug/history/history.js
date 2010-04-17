@@ -19,6 +19,7 @@ BrowserHistory = (function() {
     // type of browser
     var browser = {
         ie: false, 
+        ie8: false, 
         firefox: false, 
         safari: false, 
         opera: false, 
@@ -67,6 +68,11 @@ BrowserHistory = (function() {
     } else if (useragent.indexOf("msie") != -1) {
         browser.ie = true;
         browser.version = parseFloat(useragent.substring(useragent.indexOf('msie') + 4));
+        if (browser.version == 8)
+        {
+            browser.ie = false;
+            browser.ie8 = true;
+        }
     } else if (useragent.indexOf("safari") != -1) {
         browser.safari = true;
         browser.version = parseFloat(useragent.substring(useragent.indexOf('safari') + 7));
@@ -76,6 +82,21 @@ BrowserHistory = (function() {
 
     if (browser.ie == true && browser.version == 7) {
         window["_ie_firstload"] = false;
+    }
+
+    function hashChangeHandler()
+    {
+        currentHref = document.location.href;
+        var flexAppUrl = getHash();
+        //ADR: to fix multiple
+        if (typeof BrowserHistory_multiple != "undefined" && BrowserHistory_multiple == true) {
+            var pl = getPlayers();
+            for (var i = 0; i < pl.length; i++) {
+                pl[i].browserURLChange(flexAppUrl);
+            }
+        } else {
+            getPlayer().browserURLChange(flexAppUrl);
+        }
     }
 
     // Accessor functions for obtaining specific elements of the page.
@@ -259,6 +280,10 @@ BrowserHistory = (function() {
                 // Otherwise, write an anchor into the page and tell the browser to go there
                 addAnchor(flexAppUrl);
                 setHash(flexAppUrl);
+                
+                // For IE8 we must restore full focus/activation to our invoking player instance.
+                if (browser.ie8)
+                    getPlayer().focus();
             }
         }
         backStack.push(createState(baseUrl, newUrl, flexAppUrl));
@@ -313,6 +338,7 @@ BrowserHistory = (function() {
 						// this.iframe.src = this.blankURL + hash;
 						var sourceToSet = historyFrameSourcePrefix + getHash();
 						getHistoryFrame().src = sourceToSet;
+                        currentHref = document.location.href;
 					}
                 }
             }
@@ -322,14 +348,17 @@ BrowserHistory = (function() {
             // For Safari, we have to check to see if history.length changed.
             if (currentHistoryLength >= 0 && history.length != currentHistoryLength) {
                 //alert("did change: " + history.length + ", " + historyHash.length + "|" + historyHash[history.length] + "|>" + historyHash.join("|"));
-                // If it did change, then we have to look the old state up
-                // in our hand-maintained array since document.location.hash
-                // won't have changed, then call back into BrowserManager.
+                var flexAppUrl = getHash();
+                if (browser.version < 528.16 /* Anything earlier than Safari 4.0 */)
+                {    
+                    // If it did change and we're running Safari 3.x or earlier, 
+                    // then we have to look the old state up in our hand-maintained 
+                    // array since document.location.hash won't have changed, 
+                    // then call back into BrowserManager.
                 currentHistoryLength = history.length;
-                var flexAppUrl = historyHash[currentHistoryLength];
-                if (flexAppUrl == '') {
-                    //flexAppUrl = defaultHash;
+                    flexAppUrl = historyHash[currentHistoryLength];
                 }
+
                 //ADR: to fix multiple
                 if (typeof BrowserHistory_multiple != "undefined" && BrowserHistory_multiple == true) {
                     var pl = getPlayers();
@@ -401,9 +430,6 @@ BrowserHistory = (function() {
                 // Firefox changed; do a callback into BrowserManager to tell it.
                 currentHref = document.location.href;
                 var flexAppUrl = getHash();
-                if (flexAppUrl == '') {
-                    //flexAppUrl = defaultHash;
-                }
                 //ADR: to fix multiple
                 if (typeof BrowserHistory_multiple != "undefined" && BrowserHistory_multiple == true) {
                     var pl = getPlayers();
@@ -483,13 +509,15 @@ BrowserHistory = (function() {
 
         }
 
-        if (browser.firefox)
+        if (browser.firefox || browser.ie8)
         {
             var anchorDiv = document.createElement("div");
             anchorDiv.id = 'firefox_anchorDiv';
             document.body.appendChild(anchorDiv);
         }
-        
+
+        if (browser.ie8)        
+            document.body.onhashchange = hashChangeHandler;
         //setTimeout(checkForUrlChange, 50);
     }
 
