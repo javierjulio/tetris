@@ -1,10 +1,10 @@
 package com.javierjulio.tetris.model
 {
 	import com.javierjulio.tetris.core.MoveDirection;
-	import com.javierjulio.tetris.utils.ArrayUtil;
 	import com.javierjulio.tetris.model.grid.Cell;
-	import com.javierjulio.tetris.vo.TetrominoVO;
 	import com.javierjulio.tetris.model.grid.Grid;
+	import com.javierjulio.tetris.utils.ArrayUtil;
+	import com.javierjulio.tetris.vo.TetrominoVO;
 
 	public class GameModel
 	{

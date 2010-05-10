@@ -23,6 +23,7 @@ package
 		private var randomTetromino:TetrominoVO;
 		private var shadowTetromino:TetrominoVO;
 		private var tetromino:Tetromino;
+		private var shadow:Tetromino = new Tetromino();
 		
 		private var gameModel:GameModel;
 		private var gridModel:Grid;
@@ -105,33 +106,20 @@ package
 				shadowTetromino.location.column = randomTetromino.location.column;
 				shadowTetromino.location.row = randomTetromino.location.row;
 				
+				// on every move always recalculate shadow from where the falling 
+				// tetromino is since if say we move to the left or right, already 
+				// fallen tetrominos might be blocking our path so safest to start 
+				// from new tetromino positon and calculate shadow from there
 				for (var i:int = 0; i < randomTetromino.cells.length; i++) 
 				{
 					shadowTetromino.cells[i].column = randomTetromino.cells[i].column;
 					shadowTetromino.cells[i].row = randomTetromino.cells[i].row;
 				}
 				
-				switch (event.keyCode) 
+				// move the shadow as far down from the falling tetromino's 
+				// location as it can go
+				while (gameModel.move(shadowTetromino, MoveDirection.MOVE_DOWN)) 
 				{
-					case Keyboard.DOWN:
-						while (gameModel.move(shadowTetromino, direction));
-						break;
-					
-					case Keyboard.LEFT:
-						while (gameModel.move(shadowTetromino, MoveDirection.MOVE_DOWN));
-						break;
-					
-					case Keyboard.RIGHT:
-						while (gameModel.move(shadowTetromino, MoveDirection.MOVE_DOWN));
-						break;
-					
-					case Keyboard.UP:
-						while (gameModel.move(shadowTetromino, MoveDirection.MOVE_DOWN));
-						break;
-					
-					case Keyboard.TAB:
-						while (gameModel.move(shadowTetromino, MoveDirection.MOVE_DOWN));
-						break;
 				}
 				
 				shadow.draw(shadowTetromino);
@@ -142,7 +130,5 @@ package
 				tetromino.draw(randomTetromino);
 			}
 		}
-		
-		private var shadow:Tetromino = new Tetromino();
 	}
 }
