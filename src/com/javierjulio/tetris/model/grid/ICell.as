@@ -31,7 +31,7 @@ package com.javierjulio.tetris.model.grid
 		//----------------------------------
 		
 		/**
-		 * The data to render.
+		 * The data associated with this cell.
 		 */
 		function get data():Object;
 		
